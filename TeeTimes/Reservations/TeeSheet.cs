@@ -9,10 +9,10 @@ namespace TeeTimes.Reservations
         {
             Date = date;
             TeeTimes = Enumerable.Repeat(0, 72)
-                .Select((_, index) => 
+                .Select((_, index) =>
                 new TeeTime(
-                    date.ToDateTime(TimeOnly.MinValue) 
-                    + TimeSpan.FromMinutes(index * 10) 
+                    date.ToDateTime(TimeOnly.MinValue)
+                    + TimeSpan.FromMinutes(index * 10)
                     + TimeSpan.FromHours(7)));
         }
 
@@ -32,16 +32,21 @@ namespace TeeTimes.Reservations
                 }
             }
         }
+
+        public Reservation Reserve(TeeTime teeTime, string name)
+        {
+            return new Reservation(this, teeTime, name);
+        }
     }
 
-        public class TeeTimeNotFoundException : Exception
+    public class TeeTimeNotFoundException : Exception
+    {
+        public TeeTimeNotFoundException(string time, InvalidOperationException e) : base($"Tee time not found at {time}", e)
         {
-            public TeeTimeNotFoundException(string time, InvalidOperationException e) : base($"Tee time not found at {time}", e)
-            {
-            }
         }
+    }
 
-        public class TeeTime
+    public class TeeTime
     {
         public TeeTime(DateTime time)
         {
@@ -49,5 +54,19 @@ namespace TeeTimes.Reservations
         }
 
         public DateTime Time { get; set; }
+    }
+
+    public class Reservation
+    {
+        public Reservation(TeeSheet sheet, TeeTime time, string name)
+        {
+            Sheet = sheet;
+            Time = time;
+            Name = name;
+        }
+
+        public TeeSheet Sheet { get; }
+        public TeeTime Time { get; }
+        public string Name { get; }
     }
 }

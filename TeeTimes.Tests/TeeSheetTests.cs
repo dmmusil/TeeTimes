@@ -1,5 +1,4 @@
 using TeeTimes.Reservations;
-using static TeeTimes.Reservations.TeeSheet;
 
 namespace TeeTimes.Tests
 {
@@ -26,7 +25,7 @@ namespace TeeTimes.Tests
             for (int i = 0; i < teeTimes.Length - 1; i++)
             {
                 var teeTime1 = teeTimes[i];
-                var teeTime2 = teeTimes[i+1];
+                var teeTime2 = teeTimes[i + 1];
                 Assert.Equal(TimeSpan.FromMinutes(10), teeTime2.Time - teeTime1.Time);
             }
         }
@@ -57,6 +56,25 @@ namespace TeeTimes.Tests
             Assert.NotNull(teeSheet["18:30"]);
 
             Assert.Throws<TeeTimeNotFoundException>(() => teeSheet["22:00"]);
+        }
+
+        [Fact]
+        public void CanReserveTeeTimeWithName()
+        {
+            TeeTime teeTime = teeSheet["7:00"];
+            Reservation r = teeSheet.Reserve(teeTime, "Dylan");
+
+            Assert.Equal(teeSheet, r.Sheet);
+            Assert.Equal(teeTime, r.Time);
+            Assert.Equal("Dylan", r.Name);
+        }
+    }
+
+    public static class StringTimeHelper
+    {
+        public static TimeOnly Time(this string time)
+        {
+            return TimeOnly.Parse(time);
         }
     }
 }
