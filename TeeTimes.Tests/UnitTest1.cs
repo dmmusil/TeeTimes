@@ -10,5 +10,12 @@ namespace TeeTimes.Tests
             TeeSheet teeSheet = Schedule.Today();
             Assert.Equal(DateOnly.FromDateTime(DateTime.Today), teeSheet.Date);
         }
+
+        [Fact]
+        public void TeeSheetHas72Slots()
+        {
+            TeeSheet teeSheet = Schedule.Today();
+            Assert.Equal(72, teeSheet.TeeTimes.Count());
+        }
     }
 }
