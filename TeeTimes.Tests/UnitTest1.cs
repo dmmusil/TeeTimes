@@ -30,5 +30,14 @@ namespace TeeTimes.Tests
                 Assert.Equal(TimeSpan.FromMinutes(10), teeTime2.Time - teeTime1.Time);
             }
         }
+
+        [Fact]
+        public void TeeTimesStartAt7am()
+        {
+            TeeSheet teeSheet = Schedule.Today();
+            Assert.Equal(
+                TimeOnly.FromTimeSpan(TimeSpan.FromHours(7)),
+                TimeOnly.FromDateTime(teeSheet.TeeTimes.First().Time));
+        }
     }
 }
