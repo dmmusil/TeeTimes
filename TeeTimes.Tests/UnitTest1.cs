@@ -4,24 +4,23 @@ namespace TeeTimes.Tests
 {
     public class TeeSheetTests
     {
+        private readonly TeeSheet teeSheet = Schedule.Today();
+
         [Fact]
         public void CanGetTodaysTeeSheet()
         {
-            TeeSheet teeSheet = Schedule.Today();
             Assert.Equal(DateOnly.FromDateTime(DateTime.Today), teeSheet.Date);
         }
 
         [Fact]
         public void TeeSheetHas72Slots()
         {
-            TeeSheet teeSheet = Schedule.Today();
             Assert.Equal(72, teeSheet.TeeTimes.Count());
         }
 
         [Fact]
         public void TeeTimesAre10MinutesApart()
         {
-            TeeSheet teeSheet = Schedule.Today();
             TeeTime[] teeTimes = teeSheet.TeeTimes.ToArray();
             for (int i = 0; i < teeTimes.Count()-1; i++)
             {
@@ -34,7 +33,6 @@ namespace TeeTimes.Tests
         [Fact]
         public void TeeTimesStartAt7am()
         {
-            TeeSheet teeSheet = Schedule.Today();
             Assert.Equal(
                 TimeOnly.FromTimeSpan(TimeSpan.FromHours(7)),
                 TimeOnly.FromDateTime(teeSheet.TeeTimes.First().Time));
@@ -43,7 +41,6 @@ namespace TeeTimes.Tests
         [Fact]
         public void TheLastTeeTimeIs650pm()
         {
-            TeeSheet teeSheet = Schedule.Today();
             Assert.Equal(
                 TimeOnly.FromTimeSpan(TimeSpan.FromHours(18) + TimeSpan.FromMinutes(50)),
                 TimeOnly.FromDateTime(teeSheet.TeeTimes.Last().Time));
