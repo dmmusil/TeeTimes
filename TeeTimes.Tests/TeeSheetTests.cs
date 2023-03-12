@@ -1,4 +1,5 @@
 using TeeTimes.Reservations;
+using static TeeTimes.Reservations.TeeSheet;
 
 namespace TeeTimes.Tests
 {
@@ -22,7 +23,7 @@ namespace TeeTimes.Tests
         public void TeeTimesAre10MinutesApart()
         {
             TeeTime[] teeTimes = teeSheet.TeeTimes.ToArray();
-            for (int i = 0; i < teeTimes.Count()-1; i++)
+            for (int i = 0; i < teeTimes.Length - 1; i++)
             {
                 var teeTime1 = teeTimes[i];
                 var teeTime2 = teeTimes[i+1];
@@ -45,6 +46,17 @@ namespace TeeTimes.Tests
                 TimeOnly.FromTimeSpan(TimeSpan.FromHours(18) + TimeSpan.FromMinutes(50)),
                 TimeOnly.FromDateTime(teeSheet.TeeTimes.Last().Time));
 
+        }
+
+        [Fact]
+        public void CanGetTeeTimeByTime()
+        {
+            Assert.NotNull(teeSheet["7:00"]);
+            Assert.NotNull(teeSheet["8:00"]);
+            Assert.NotNull(teeSheet["11:00"]);
+            Assert.NotNull(teeSheet["18:30"]);
+
+            Assert.Throws<TeeTimeNotFoundException>(() => teeSheet["22:00"]);
         }
     }
 }

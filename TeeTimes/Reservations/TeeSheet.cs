@@ -9,7 +9,7 @@ namespace TeeTimes.Reservations
         {
             Date = date;
             TeeTimes = Enumerable.Repeat(0, 72)
-                .Select((value, index) => 
+                .Select((_, index) => 
                 new TeeTime(
                     date.ToDateTime(TimeOnly.MinValue) 
                     + TimeSpan.FromMinutes(index * 10) 
@@ -18,9 +18,30 @@ namespace TeeTimes.Reservations
 
         public DateOnly Date { get; set; }
         public IEnumerable<TeeTime> TeeTimes { get; set; }
+        public TeeTime this[string time]
+        {
+            get
+            {
+                try
+                {
+                    return TeeTimes.First(t => TimeOnly.FromDateTime(t.Time) == TimeOnly.Parse(time));
+                }
+                catch (InvalidOperationException e) when (e.Message.StartsWith("Sequence contains no"))
+                {
+                    throw new TeeTimeNotFoundException(time, e);
+                }
+            }
+        }
     }
 
-    public class TeeTime
+        public class TeeTimeNotFoundException : Exception
+        {
+            public TeeTimeNotFoundException(string time, InvalidOperationException e) : base($"Tee time not found at {time}", e)
+            {
+            }
+        }
+
+        public class TeeTime
     {
         public TeeTime(DateTime time)
         {
