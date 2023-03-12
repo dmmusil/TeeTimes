@@ -27,4 +27,4 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Build container
-      run: cd TeeTimes && docker build .
+      run: docker build -f TeeTimes/Dockerfile .
