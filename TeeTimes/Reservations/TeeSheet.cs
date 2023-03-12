@@ -8,16 +8,21 @@ namespace TeeTimes.Reservations
         public TeeSheet(DateOnly date)
         {
             Date = date;
+            TeeTimes = Enumerable.Repeat(0, 72)
+                .Select((value, index) => new TeeTime(date.ToDateTime(TimeOnly.MinValue) + TimeSpan.FromMinutes(index * 10)));
         }
 
         public DateOnly Date { get; set; }
-        public IEnumerable<TeeTime> TeeTimes { get; set; } = Enumerable.Repeat(new TeeTime(), 72);
+        public IEnumerable<TeeTime> TeeTimes { get; set; }
     }
 
     public class TeeTime
     {
-        public TeeTime()
+        public TeeTime(DateTime time)
         {
+            Time = time;
         }
+
+        public DateTime Time { get; set; }
     }
 }
