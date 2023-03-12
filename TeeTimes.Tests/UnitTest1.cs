@@ -39,5 +39,15 @@ namespace TeeTimes.Tests
                 TimeOnly.FromTimeSpan(TimeSpan.FromHours(7)),
                 TimeOnly.FromDateTime(teeSheet.TeeTimes.First().Time));
         }
+
+        [Fact]
+        public void TheLastTeeTimeIs650pm()
+        {
+            TeeSheet teeSheet = Schedule.Today();
+            Assert.Equal(
+                TimeOnly.FromTimeSpan(TimeSpan.FromHours(18) + TimeSpan.FromMinutes(50)),
+                TimeOnly.FromDateTime(teeSheet.TeeTimes.Last().Time));
+
+        }
     }
 }
