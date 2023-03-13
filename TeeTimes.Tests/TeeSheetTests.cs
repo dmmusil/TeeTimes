@@ -15,18 +15,18 @@ namespace TeeTimes.Tests
         [Fact]
         public void TeeSheetHas72Slots()
         {
-            Assert.Equal(72, teeSheet.TeeTimes.Count());
+            Assert.Equal(72, teeSheet.Count);
         }
 
         [Fact]
         public void TeeTimesAre10MinutesApart()
         {
-            TeeTime[] teeTimes = teeSheet.TeeTimes.ToArray();
+            var teeTimes = teeSheet.ToArray();
             for (int i = 0; i < teeTimes.Length - 1; i++)
             {
                 var teeTime1 = teeTimes[i];
                 var teeTime2 = teeTimes[i + 1];
-                Assert.Equal(TimeSpan.FromMinutes(10), teeTime2.Time - teeTime1.Time);
+                Assert.Equal(TimeSpan.FromMinutes(10), teeTime2.Value.Time - teeTime1.Value.Time);
             }
         }
 
@@ -35,7 +35,7 @@ namespace TeeTimes.Tests
         {
             Assert.Equal(
                 TimeOnly.FromTimeSpan(TimeSpan.FromHours(7)),
-                TimeOnly.FromDateTime(teeSheet.TeeTimes.First().Time));
+                TimeOnly.FromDateTime(teeSheet.First().Value.Time));
         }
 
         [Fact]
@@ -43,38 +43,29 @@ namespace TeeTimes.Tests
         {
             Assert.Equal(
                 TimeOnly.FromTimeSpan(TimeSpan.FromHours(18) + TimeSpan.FromMinutes(50)),
-                TimeOnly.FromDateTime(teeSheet.TeeTimes.Last().Time));
-
+                TimeOnly.FromDateTime(teeSheet.Last().Value.Time));
         }
 
         [Fact]
         public void CanGetTeeTimeByTime()
         {
-            Assert.NotNull(teeSheet["7:00"]);
-            Assert.NotNull(teeSheet["8:00"]);
-            Assert.NotNull(teeSheet["11:00"]);
-            Assert.NotNull(teeSheet["18:30"]);
+            Assert.NotNull(teeSheet["7:00 AM"]);
+            Assert.NotNull(teeSheet["8:00 AM"]);
+            Assert.NotNull(teeSheet["11:00 AM"]);
+            Assert.NotNull(teeSheet["6:30 PM"]);
 
-            Assert.Throws<TeeTimeNotFoundException>(() => teeSheet["22:00"]);
+            Assert.Throws<KeyNotFoundException>(() => teeSheet["22:00"]);
         }
 
         [Fact]
         public void CanReserveTeeTimeWithName()
         {
-            TeeTime teeTime = teeSheet["7:00"];
+            TeeTime teeTime = teeSheet["7:00 AM"];
             Reservation r = teeSheet.Reserve(teeTime, "Dylan");
 
             Assert.Equal(teeSheet, r.Sheet);
             Assert.Equal(teeTime, r.Time);
             Assert.Equal("Dylan", r.Name);
-        }
-    }
-
-    public static class StringTimeHelper
-    {
-        public static TimeOnly Time(this string time)
-        {
-            return TimeOnly.Parse(time);
         }
     }
 }

@@ -2,47 +2,30 @@
 
 namespace TeeTimes.Reservations
 {
-    public class TeeSheet
+    public class TeeSheet : Dictionary<string, TeeTime>
     {
 
         public TeeSheet(DateOnly date)
         {
             Date = date;
-            TeeTimes = Enumerable.Repeat(0, 72)
-                .Select((_, index) =>
-                new TeeTime(
-                    date.ToDateTime(TimeOnly.MinValue)
-                    + TimeSpan.FromMinutes(index * 10)
-                    + TimeSpan.FromHours(7)));
+            var teeTimes = Enumerable.Repeat(0, 72)
+                .Select((_, index) => {
+                    DateTime time = date.ToDateTime(TimeOnly.MinValue)
+                                        + TimeSpan.FromMinutes(index * 10)
+                                        + TimeSpan.FromHours(7);
+                    return new TeeTime(time);
+                });
+            foreach (var teeTime in teeTimes)
+            {
+                this[teeTime.Time.ToShortTimeString()] = teeTime;
+            }
         }
 
         public DateOnly Date { get; set; }
-        public IEnumerable<TeeTime> TeeTimes { get; set; }
-        public TeeTime this[string time]
-        {
-            get
-            {
-                try
-                {
-                    return TeeTimes.First(t => TimeOnly.FromDateTime(t.Time) == TimeOnly.Parse(time));
-                }
-                catch (InvalidOperationException e) when (e.Message.StartsWith("Sequence contains no"))
-                {
-                    throw new TeeTimeNotFoundException(time, e);
-                }
-            }
-        }
 
         public Reservation Reserve(TeeTime teeTime, string name)
         {
             return new Reservation(this, teeTime, name);
-        }
-    }
-
-    public class TeeTimeNotFoundException : Exception
-    {
-        public TeeTimeNotFoundException(string time, InvalidOperationException e) : base($"Tee time not found at {time}", e)
-        {
         }
     }
 
