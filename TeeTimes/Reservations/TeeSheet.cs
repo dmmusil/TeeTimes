@@ -8,12 +8,12 @@ namespace TeeTimes.Reservations
         public TeeSheet(DateOnly date)
         {
             Date = date;
-            var teeTimes = Enumerable.Repeat(0, 72)
-                .Select((_, index) => {
+            var teeTimes = Enumerable.Range(0, 72)
+                .Select(value => {
                     DateTime time = date.ToDateTime(TimeOnly.MinValue)
-                                        + TimeSpan.FromMinutes(index * 10)
+                                        + TimeSpan.FromMinutes(value * 10)
                                         + TimeSpan.FromHours(7);
-                    return new TeeTime(time);
+                    return new OpenTeeTime(time);
                 });
             foreach (var teeTime in teeTimes)
             {
@@ -23,13 +23,21 @@ namespace TeeTimes.Reservations
 
         public DateOnly Date { get; set; }
 
-        public Reservation Reserve(TeeTime teeTime, string name)
+        public void Reserve(string time, string name)
         {
-            return new Reservation(this, teeTime, name);
+            if (this[time] is OpenTeeTime available)
+            {
+                this[time] = new ReservedTeeTime(available.Time, name);
+            }
+            else
+            {
+                throw new Exception();
+            }
+            
         }
     }
 
-    public class TeeTime
+    public abstract class TeeTime
     {
         public TeeTime(DateTime time)
         {
@@ -39,17 +47,20 @@ namespace TeeTimes.Reservations
         public DateTime Time { get; set; }
     }
 
-    public class Reservation
+    public class OpenTeeTime : TeeTime
     {
-        public Reservation(TeeSheet sheet, TeeTime time, string name)
+        public OpenTeeTime(DateTime time) : base(time)
         {
-            Sheet = sheet;
-            Time = time;
+        }
+    }
+
+    public class ReservedTeeTime : TeeTime
+    {
+        public ReservedTeeTime(DateTime time, string name) : base(time)
+        {
             Name = name;
         }
 
-        public TeeSheet Sheet { get; }
-        public TeeTime Time { get; }
         public string Name { get; }
     }
 }

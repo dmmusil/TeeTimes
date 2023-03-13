@@ -54,18 +54,25 @@ namespace TeeTimes.Tests
             Assert.NotNull(teeSheet["11:00 AM"]);
             Assert.NotNull(teeSheet["6:30 PM"]);
 
-            Assert.Throws<KeyNotFoundException>(() => teeSheet["22:00"]);
+            Assert.Throws<KeyNotFoundException>(() => teeSheet["7:00 PM"]);
         }
 
         [Fact]
         public void CanReserveTeeTimeWithName()
         {
-            TeeTime teeTime = teeSheet["7:00 AM"];
-            Reservation r = teeSheet.Reserve(teeTime, "Dylan");
+            teeSheet.Reserve("7:00 AM", "Dylan");
 
-            Assert.Equal(teeSheet, r.Sheet);
-            Assert.Equal(teeTime, r.Time);
-            Assert.Equal("Dylan", r.Name);
+            ReservedTeeTime reservation = (ReservedTeeTime)teeSheet["7:00 AM"];
+
+            Assert.Equal("Dylan", reservation.Name);
+        }
+
+        [Fact]
+        public void CanNotReserveAnAlreadyReservedTeeTime()
+        {
+            teeSheet.Reserve("7:00 AM", "Dylan");
+
+            Assert.Throws<Exception>(() => teeSheet.Reserve("7:00 AM", "Bob"));
         }
     }
 }
